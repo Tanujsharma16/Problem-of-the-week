@@ -1,0 +1,133 @@
+1:Find Minimum in rotated sorted array
+
+Approach 1 :Brute Force
+public int findMin(int[] nums) {
+    int min = nums[0];
+    for (int num : nums) {
+        if (num < min) {
+            min = num;
+        }
+    }
+    return min;
+}
+Time Complexity: O(n) & Space Complexity: O(1)
+Approach 2: Binary Search
+public int findMin(int[] nums) {
+    int left = 0, right = nums.length - 1;
+
+    while (left < right) {
+        int mid = (left + right) / 2;
+
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left];
+}
+Time Complexity: O(log n) & Space Complexity: O(1)
+
+2:Subarray Sum Equals K
+Approach 1: Prefix Sum + HashMap
+
+import java.util.HashMap;
+public int subarraySum(int[] nums, int k) {
+    int count = 0, sum = 0;
+    HashMap<Integer, Integer> map = new HashMap<>();
+    map.put(0, 1); // Handle cases when sum equals k at current index
+
+    for (int num : nums) {
+        sum += num;
+        count += map.getOrDefault(sum - k, 0);
+        map.put(sum, map.getOrDefault(sum, 0) + 1);
+    }
+
+    return count;
+}
+Time Complexity: O(n) & Space Complexity: O(n)
+
+Approach 2: Brute Force Using Nested Loops
+public int subarraySumBruteForce(int[] nums, int k) {
+    int count = 0;
+    for (int i = 0; i < nums.length; i++) {
+        int sum = 0;
+        for (int j = i; j < nums.length; j++) {
+            sum += nums[j];
+            if (sum == k) count++;
+        }
+    }
+    return count;
+}
+Time Complexity: O(n²) & Space Complexity: O(1)
+
+Approach 3: Sliding Window (Only for Positives)
+public int subarraySumSlidingWindow(int[] nums, int k) {
+    int count = 0, start = 0, sum = 0;
+
+    for (int end = 0; end < nums.length; end++) {
+        sum += nums[end];
+
+        while (sum > k && start <= end) {
+            sum -= nums[start++];
+        }
+
+        if (sum == k) count++;
+    }
+
+    return count;
+}
+Time Complexity: O(n) & Space Complexity: O(1)
+
+3:Ruby Second Hpuse
+public class PaintHouseII {
+public int minCostII(int[][] costs) {
+int n = costs.length;
+if (n == 0) return 0;
+int k = costs[0].length;
+if (k == 0) return 0;
+// Track the least and second least cost from the previous row
+int min1 = -1, min2 = -1;
+for (int i = 0; i < n; i++) {
+int lastMin1 = min1, lastMin2 = min2;
+min1 = -1;
+min2 = -1;
+for (int j = 0; j < k; j++) {
+if (i > 0) {
+// If previous color was not j, use the min1 cost
+if (j != lastMin1) {
+costs[i][j] += costs[i - 1][lastMin1];
+} else {
+// If previous color was j, use second min
+costs[i][j] += costs[i - 1][lastMin2];
+
+}
+}
+// Update min1 and min2 for current row
+if (min1 == -1 || costs[i][j] < costs[i][min1]) {
+min2 = min1;
+min1 = j;
+} else if (min2 == -1 || costs[i][j] < costs[i][min2]) {
+min2 = j;
+}
+}
+}
+return costs[n - 1][min1];
+}
+// For testing with console input format
+public static void main(String[] args) {
+Scanner scanner = new Scanner(System.in);
+int n = scanner.nextInt();
+int k = scanner.nextInt();
+int[][] costs = new int[n][k];
+for (int i = 0; i < n; i++) {
+for (int j = 0; j < k; j++) {
+costs[i][j] = scanner.nextInt();
+}
+}
+
+System.out.println(minCostII(costs));
+}
+}
+}
